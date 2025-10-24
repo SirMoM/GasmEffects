@@ -7,7 +7,7 @@ import (
 )
 
 type ImgData struct {
-	Data        []byte `js:"data"`
+	Data        []byte `js:"data,clamped"`
 	ColorSpace  string `js:"colorSpace"`
 	Height      int    `js:"height"`
 	PixelFormat string `js:"pixelFormat"`
@@ -76,18 +76,18 @@ func GreyScale(oldImgData ImgData) ImgData {
 	imgAsRGBA := rgbaFromImageDataData(oldImgData)
 	info("converted to RGBA array")
 
- for i := range imgAsRGBA {
- 	r := float64(imgAsRGBA[i].R)
- 	g := float64(imgAsRGBA[i].G)
- 	b := float64(imgAsRGBA[i].B)
- 	gray := uint8(math.Floor(0.3*r + 0.59*g + 0.11*b))
- 	imgAsRGBA[i].R = gray
- 	imgAsRGBA[i].G = gray
- 	imgAsRGBA[i].B = gray
- 	// preserve alpha
- }
+	for i := range imgAsRGBA {
+		r := float64(imgAsRGBA[i].R)
+		g := float64(imgAsRGBA[i].G)
+		b := float64(imgAsRGBA[i].B)
+		gray := uint8(math.Floor(0.3*r + 0.59*g + 0.11*b))
+		imgAsRGBA[i].R = gray
+		imgAsRGBA[i].G = gray
+		imgAsRGBA[i].B = gray
+		// preserve alpha
+	}
 
- info("converted to greyscale")
+	info("converted to greyscale")
 	greyscaledImageData := ImgData{
 		Data:        nil,
 		ColorSpace:  oldImgData.ColorSpace,

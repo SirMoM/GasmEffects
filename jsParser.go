@@ -34,6 +34,8 @@ func encodeJsObject[T any](strct *T) js.Value {
 		isClamped := false
 		if ok {
 			name, opts := parseJsTag(jsTag)
+			warn(name)
+			warn(opts)
 			if name != "" {
 				jsName = name
 			} else {
@@ -83,6 +85,8 @@ func encodeJsObject[T any](strct *T) js.Value {
 }
 
 func parseJsObject[T any](jsObj js.Value, strct *T) {
+	warn(jsObj)
+
 	val := reflect.ValueOf(strct).Elem()
 
 	for i := 0; i < val.NumField(); i++ {
@@ -90,9 +94,12 @@ func parseJsObject[T any](jsObj js.Value, strct *T) {
 		typeField := val.Type().Field(i)
 
 		// Get the JSON field name from the tag or fall back to the struct field name
-		jsName, ok := typeField.Tag.Lookup("js")
-		if !ok {
-			jsName = typeField.Name
+		var jsName string
+		if jsTag, ok := typeField.Tag.Lookup("js"); ok {
+			jsName, _ = parseJsTag(jsTag)
+
+		} else {
+			jsName = typeField.Type.Name()
 		}
 
 		// Log the JSON name for debugging purposes
@@ -141,13 +148,17 @@ func setFieldValue(field reflect.Value, fieldValue js.Value) error {
 
 // parseJsTag splits `js` struct tag into field name and option flags (e.g., "data,clamped").
 func parseJsTag(tag string) (name string, opts map[string]bool) {
+	opts = make(map[string]bool)
 	if tag == "" {
 		return
 	}
 	parts := strings.Split(tag, ",")
+	info(parts)
+
 	if len(parts) > 0 {
 		name = parts[0]
 	}
+
 	for _, p := range parts[1:] {
 		p = strings.TrimSpace(p)
 		if p != "" {

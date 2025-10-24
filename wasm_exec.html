@@ -57,15 +57,15 @@ Add the following polyfill for Microsoft Edge 17/18 support:
         // Size the canvas to the returned image dimensions
         can.width = out.width;
         can.height = out.height;
-        // Go now returns a Uint8ClampedArray already; pass it directly to ImageData
-        const imageData = new ImageData(out.data, out.width, out.height);
+
+        const imageData = new ImageData(Uint8ClampedArray.from(out.data), out.width, out.height);
         ctx.putImageData(imageData, 0, 0);
         vrImg.src = can.toDataURL();
     }
 </script>
 
 <button onClick="RefreshGoWams();" id="runButton" disabled>Refresh Go WASM</button>
-<button onClick="goMI(ImgData());">RUN</button>
+<button onClick="goMI(drawImgData());">RUN</button>
 <img id="vrImg" src="./Vinosaurus_Rex.png"/>
 </body>
 
