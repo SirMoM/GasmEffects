@@ -33,7 +33,7 @@ type RGBA struct {
 
 type RgbaImage []RGBA
 
-func (rgbaImage *RgbaImage) toJsImgData(imgData *ImgData) {
+func (rgbaImage *RgbaImage) toJsImgData() []byte {
 	// Convert the RGBA slice back to a tightly packed []byte (length = pixels*4)
 	pixelCount := len(*rgbaImage)
 	data := make([]byte, pixelCount*4)
@@ -45,7 +45,7 @@ func (rgbaImage *RgbaImage) toJsImgData(imgData *ImgData) {
 		data[base+2] = rgba.B
 		data[base+3] = rgba.A
 	}
-	imgData.Data = data
+	return data
 }
 
 func rgbaFromImageDataData(imgData ImgData) RgbaImage {
@@ -71,10 +71,9 @@ func rgbaFromImageDataData(imgData ImgData) RgbaImage {
 
 // GreyScale uses the Luminosity Method to turn the image to a gray scale
 // grayscale = 0.3 * R + 0.59 * G + 0.11 * B
-func GreyScale(oldImgData ImgData) ImgData {
-
-	imgAsRGBA := rgbaFromImageDataData(oldImgData)
+func (imageData *ImgData) GreyScale() {
 	info("converted to RGBA array")
+	imgAsRGBA := rgbaFromImageDataData(*imageData)
 
 	for i := range imgAsRGBA {
 		r := float64(imgAsRGBA[i].R)
@@ -84,22 +83,10 @@ func GreyScale(oldImgData ImgData) ImgData {
 		imgAsRGBA[i].R = gray
 		imgAsRGBA[i].G = gray
 		imgAsRGBA[i].B = gray
-		// preserve alpha
 	}
 
 	info("converted to greyscale")
-	greyscaledImageData := ImgData{
-		Data:        nil,
-		ColorSpace:  oldImgData.ColorSpace,
-		PixelFormat: oldImgData.PixelFormat,
-		Height:      oldImgData.Height,
-		Width:       oldImgData.Width,
-	}
-
-	imgAsRGBA.toJsImgData(&greyscaledImageData)
-
-	info("converted to JS struct")
-	return greyscaledImageData
+	imageData.Data = imgAsRGBA.toJsImgData()
 }
 
 func manipulateImg(this js.Value, args []js.Value) any {
@@ -109,11 +96,12 @@ func manipulateImg(this js.Value, args []js.Value) any {
 	if len(args) != 1 {
 		ERR(fmt.Sprintf("manipulateImg requires 1 argument %v", args))
 	}
+	if args[0].Type() != js.TypeObject {
+		ERR(fmt.Sprintf("manipulateImg requires an object %v", args))
+	}
 	var strct ImgData
 	parseJsObject(args[0], &strct)
 
-	info("parsed obj")
-	var res = GreyScale(strct)
-	info(res.String())
-	return encodeJsObject(&res)
+	strct.GreyScale()
+	return encodeJsObject(&strct)
 }
