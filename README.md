@@ -23,9 +23,9 @@ The project is split into 2 parts:
     ```
 2. Start a http server for this folder
    ```bash
-   python -m http.server -d "."
+   python -m http.server -d "./example"
    ```
-3. Open the browser and go to http://localhost:8080/
+3. Open the browser and go to http://localhost:8000/
 
 ## Effects
 - Grayscale
