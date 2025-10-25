@@ -1,6 +1,6 @@
 async function loadAndInstantiateWasm() {
     const go = new Go();
-    const result = await WebAssembly.instantiateStreaming(fetch("test.wasm"), go.importObject).catch((err) => {
+    const result = await WebAssembly.instantiateStreaming(fetch("./dist/test.wasm"), go.importObject).catch((err) => {
         console.error(err);
     });
     globalThis.goWasmModule = result.module;

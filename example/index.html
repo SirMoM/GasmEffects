@@ -3,13 +3,13 @@
     <head>
         <meta charset="utf-8">
         <title>Go wasm</title>
-    </head>
-    <body>
+        <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    </head>    <body>
         <button onClick="loadAndInstantiateWasm();" id="reloadButton">Reload WASM</button>
         <button onClick="restartWasm();" id="restartButton" disabled>Restart WASM</button>
         <button onClick="drawImgData();" id="runButton" disabled>RUN</button>
         <img id="vrImg" src="./Vinosaurus_Rex.png"/>
-        <script src="wasm_exec.js"></script>
+        <script src="./dist/wasm_exec.js"></script>
         <script src="index.js"></script>
         <script>
             if (!WebAssembly.instantiateStreaming) { // polyfill
