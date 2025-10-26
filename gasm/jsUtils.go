@@ -1,4 +1,4 @@
-package main
+package gasm
 
 import (
 	"fmt"
@@ -35,11 +35,11 @@ func log(obj any, verbose bool, level string) {
 	_, _ = fmt.Fprintln(writer, msg)
 }
 
-func info(obj any) {
+func Info(obj any) {
 	log(obj, verbose, "[INFO]")
 }
 
-func warn(obj any) {
+func Warn(obj any) {
 	log(obj, verbose, "[WARN]")
 }
 

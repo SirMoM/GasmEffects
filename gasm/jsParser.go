@@ -1,4 +1,4 @@
-package main
+package gasm
 
 import (
 	"fmt"
@@ -22,20 +22,20 @@ func encodeJsObject[T any](strct *T) js.Value {
 		ERR("encodeJsObject expects a pointer to a struct")
 	}
 
-	// Create a real JS object so syscall/js doesn't need to convert Go maps/slices
+	// Create a real JS object so syscall/gasm doesn't need to convert Go maps/slices
 	obj := js.Global().Get("Object").New()
 
 	for i := 0; i < val.NumField(); i++ {
 		field := val.Field(i)
 		typeField := typ.Field(i)
 
-		jsTag, ok := typeField.Tag.Lookup("js")
+		jsTag, ok := typeField.Tag.Lookup("gasm")
 		jsName := ""
 		isClamped := false
 		if ok {
 			name, opts := parseJsTag(jsTag)
-			warn(name)
-			warn(opts)
+			Warn(name)
+			Warn(opts)
 			if name != "" {
 				jsName = name
 			} else {
@@ -48,7 +48,7 @@ func encodeJsObject[T any](strct *T) js.Value {
 			jsName = typeField.Name
 		}
 
-		info(fmt.Sprintf("Encoding field: %s", jsName))
+		Info(fmt.Sprintf("Encoding field: %s", jsName))
 
 		switch field.Kind() {
 		case reflect.Slice:
@@ -85,7 +85,7 @@ func encodeJsObject[T any](strct *T) js.Value {
 }
 
 func parseJsObject[T any](jsObj js.Value, strct *T) {
-	warn(jsObj)
+	Warn(jsObj)
 
 	val := reflect.ValueOf(strct).Elem()
 
@@ -95,7 +95,7 @@ func parseJsObject[T any](jsObj js.Value, strct *T) {
 
 		// Get the JSON field name from the tag or fall back to the struct field name
 		var jsName string
-		if jsTag, ok := typeField.Tag.Lookup("js"); ok {
+		if jsTag, ok := typeField.Tag.Lookup("gasm"); ok {
 			jsName, _ = parseJsTag(jsTag)
 
 		} else {
@@ -103,7 +103,7 @@ func parseJsObject[T any](jsObj js.Value, strct *T) {
 		}
 
 		// Log the JSON name for debugging purposes
-		info(fmt.Sprintf("Parsing field: %s", jsName))
+		Info(fmt.Sprintf("Parsing field: %s", jsName))
 
 		// Retrieve the value from the JavaScript object
 		fieldValue := jsObj.Get(jsName)
@@ -113,7 +113,7 @@ func parseJsObject[T any](jsObj js.Value, strct *T) {
 				ERR(fmt.Sprintf("Error setting field %s: %v", jsName, err))
 			}
 		} else {
-			warn(fmt.Sprintf("Field %s does not exist in the provided JavaScript object.", jsName))
+			Warn(fmt.Sprintf("Field %s does not exist in the provided JavaScript object.", jsName))
 		}
 	}
 }
@@ -146,14 +146,14 @@ func setFieldValue(field reflect.Value, fieldValue js.Value) error {
 	return nil
 }
 
-// parseJsTag splits `js` struct tag into field name and option flags (e.g., "data,clamped").
+// parseJsTag splits `gasm` struct tag into field name and option flags (e.g., "data,clamped").
 func parseJsTag(tag string) (name string, opts map[string]bool) {
 	opts = make(map[string]bool)
 	if tag == "" {
 		return
 	}
 	parts := strings.Split(tag, ",")
-	info(parts)
+	Info(parts)
 
 	if len(parts) > 0 {
 		name = parts[0]
