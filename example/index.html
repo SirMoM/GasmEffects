@@ -7,6 +7,10 @@
     </head>    <body>
         <button onClick="loadAndInstantiateWasm();" id="reloadButton">Reload WASM</button>
         <button onClick="restartWasm();" id="restartButton" disabled>Restart WASM</button>
+        <select id="filter" name="filter">
+            <option value="greyscale" selected>Greyscale</option>
+            <option value="nearest neighbour">NN</option>
+        </select>
         <button onClick="drawImgData();" id="runButton" disabled>RUN</button>
         <br>
         <img id="vrImg" src="./Vinosaurus_Rex.png" alt="Der schreckliche Vinosaurus Rex"/>

@@ -42,7 +42,7 @@ function ImgData() {
 }
 
 function drawImgData() {
-    const out = goMI(ImgData());
+    const out = goMI(document.getElementById("filter").value, ImgData());
     const can = document.createElement("canvas");
     const ctx = can.getContext("2d");
     // Size the canvas to the returned image dimensions
