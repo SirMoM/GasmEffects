@@ -5,6 +5,8 @@ import (
 	"reflect"
 	"strings"
 	"syscall/js"
+
+	"github.com/SirMoM/go-wasm/shared"
 )
 
 func encodeJsObject[T any](strct *T) js.Value {
@@ -12,14 +14,14 @@ func encodeJsObject[T any](strct *T) js.Value {
 
 	// Ensure the input is a non-nil pointer to a struct
 	if val.Kind() != reflect.Ptr || val.IsNil() {
-		ERR("encodeJsObject requires a non-nil pointer to a struct")
+		shared.ERR("encodeJsObject requires a non-nil pointer to a struct")
 	}
 
 	val = val.Elem()
 	typ := val.Type()
 
 	if val.Kind() != reflect.Struct {
-		ERR("encodeJsObject expects a pointer to a struct")
+		shared.ERR("encodeJsObject expects a pointer to a struct")
 	}
 
 	// Create a real JS object so syscall/gasm doesn't need to convert Go maps/slices
@@ -34,8 +36,8 @@ func encodeJsObject[T any](strct *T) js.Value {
 		isClamped := false
 		if ok {
 			name, opts := parseJsTag(jsTag)
-			Warn(name)
-			Warn(opts)
+			shared.Warn(name)
+			shared.Warn(opts)
 			if name != "" {
 				jsName = name
 			} else {
@@ -48,7 +50,7 @@ func encodeJsObject[T any](strct *T) js.Value {
 			jsName = typeField.Name
 		}
 
-		Info(fmt.Sprintf("Encoding field: %s", jsName))
+		shared.Info(fmt.Sprintf("Encoding field: %s", jsName))
 
 		switch field.Kind() {
 		case reflect.Slice:
@@ -65,7 +67,7 @@ func encodeJsObject[T any](strct *T) js.Value {
 				break
 			}
 			// Other slice kinds are not supported in this encoder
-			ERR(fmt.Sprintf("encodeJsObject: unsupported slice element kind for field %s: %s", jsName, field.Type().Elem().Kind()))
+			shared.ERR(fmt.Sprintf("encodeJsObject: unsupported slice element kind for field %s: %s", jsName, field.Type().Elem().Kind()))
 		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 			obj.Set(jsName, int(field.Int()))
 		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
@@ -77,7 +79,7 @@ func encodeJsObject[T any](strct *T) js.Value {
 		case reflect.String:
 			obj.Set(jsName, field.String())
 		default:
-			ERR(fmt.Sprintf("encodeJsObject: unsupported field kind %s for %s", field.Kind(), jsName))
+			shared.ERR(fmt.Sprintf("encodeJsObject: unsupported field kind %s for %s", field.Kind(), jsName))
 		}
 	}
 
@@ -85,7 +87,7 @@ func encodeJsObject[T any](strct *T) js.Value {
 }
 
 func parseJsObject[T any](jsObj js.Value, strct *T) {
-	Warn(jsObj)
+	shared.Warn(jsObj)
 
 	val := reflect.ValueOf(strct).Elem()
 
@@ -103,17 +105,17 @@ func parseJsObject[T any](jsObj js.Value, strct *T) {
 		}
 
 		// Log the JSON name for debugging purposes
-		Info(fmt.Sprintf("Parsing field: %s", jsName))
+		shared.Info(fmt.Sprintf("Parsing field: %s", jsName))
 
 		// Retrieve the value from the JavaScript object
 		fieldValue := jsObj.Get(jsName)
 
 		if !fieldValue.IsUndefined() { // Check if the field exists in the jsObj
 			if err := setFieldValue(field, fieldValue); err != nil {
-				ERR(fmt.Sprintf("Error setting field %s: %v", jsName, err))
+				shared.ERR(fmt.Sprintf("Error setting field %s: %v", jsName, err))
 			}
 		} else {
-			Warn(fmt.Sprintf("Field %s does not exist in the provided JavaScript object.", jsName))
+			shared.Warn(fmt.Sprintf("Field %s does not exist in the provided JavaScript object.", jsName))
 		}
 	}
 }
@@ -153,7 +155,7 @@ func parseJsTag(tag string) (name string, opts map[string]bool) {
 		return
 	}
 	parts := strings.Split(tag, ",")
-	Info(parts)
+	shared.Info(parts)
 
 	if len(parts) > 0 {
 		name = parts[0]

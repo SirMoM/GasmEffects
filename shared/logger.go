@@ -1,4 +1,4 @@
-package gasm
+package shared
 
 import (
 	"fmt"
