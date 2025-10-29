@@ -36,8 +36,6 @@ func encodeJsObject[T any](strct *T) js.Value {
 		isClamped := false
 		if ok {
 			name, opts := parseJsTag(jsTag)
-			shared.Warn(name)
-			shared.Warn(opts)
 			if name != "" {
 				jsName = name
 			} else {
@@ -50,7 +48,7 @@ func encodeJsObject[T any](strct *T) js.Value {
 			jsName = typeField.Name
 		}
 
-		shared.Info(fmt.Sprintf("Encoding field: %s", jsName))
+		//shared.Info(fmt.Sprintf("Encoding field: %s", jsName))
 
 		switch field.Kind() {
 		case reflect.Slice:
@@ -87,7 +85,6 @@ func encodeJsObject[T any](strct *T) js.Value {
 }
 
 func parseJsObject[T any](jsObj js.Value, strct *T) {
-	shared.Warn(jsObj)
 
 	val := reflect.ValueOf(strct).Elem()
 
@@ -105,7 +102,7 @@ func parseJsObject[T any](jsObj js.Value, strct *T) {
 		}
 
 		// Log the JSON name for debugging purposes
-		shared.Info(fmt.Sprintf("Parsing field: %s", jsName))
+		//shared.Info(fmt.Sprintf("Parsing field: %s", jsName))
 
 		// Retrieve the value from the JavaScript object
 		fieldValue := jsObj.Get(jsName)
@@ -155,7 +152,7 @@ func parseJsTag(tag string) (name string, opts map[string]bool) {
 		return
 	}
 	parts := strings.Split(tag, ",")
-	shared.Info(parts)
+	//shared.Info(parts)
 
 	if len(parts) > 0 {
 		name = parts[0]

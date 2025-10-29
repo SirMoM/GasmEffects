@@ -5,9 +5,6 @@ VERSION_FILE := VERSION
 VERSION := $(shell git rev-parse --short HEAD)
 DIRTY := $(shell git status --porcelain)
 
-version:
-	@echo "$(VERSION)$(if $(DIRTY),-dirty)" > $(VERSION_FILE)
-
 buildWasm: clean version $(GO_FILES)
 	GOOS=js GOARCH=wasm go build -o dist/test.wasm .
 	cp wasm_exec.js dist/
@@ -16,6 +13,9 @@ buildWasm: clean version $(GO_FILES)
 
 serve:
 	python3 -m http.server -d "./example"
+
+version:
+	@echo "$(VERSION)$(if $(DIRTY),-dirty)" > $(VERSION_FILE)
 
 clean:
 	rm -f dist/test.wasm dist/wasm_exec.js dist/VERSION
