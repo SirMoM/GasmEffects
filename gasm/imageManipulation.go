@@ -51,6 +51,8 @@ func ManipulateImg(this js.Value, args []js.Value) any {
 		idx = e.NEAREST_NEIGHBOUR
 	case "bilinear":
 		idx = e.BILINEAR
+	case "text":
+		idx = e.TEXT
 	default:
 		shared.ERR(fmt.Sprintf("unknown manipulation function %q. Supported: greyscale", manipulateImgArgs.functionName))
 		return js.Undefined()

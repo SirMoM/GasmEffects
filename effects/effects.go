@@ -18,6 +18,7 @@ const (
 	GREYSCALE = iota
 	NEAREST_NEIGHBOUR
 	BILINEAR
+	TEXT
 	END
 )
 
@@ -28,6 +29,7 @@ var Functions ManipulationFunctions = ManipulationFunctions{
 	Greyscale,
 	nearestNeighbour,
 	bilinear,
+	drawText,
 }
 
 func GetManipulationFunction(funIdx int) ManipulationFunction {

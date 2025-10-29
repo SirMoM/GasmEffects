@@ -4,6 +4,11 @@
         <meta charset="utf-8">
         <title>Go wasm</title>
         <link rel="icon" href="favicon.svg" type="image/svg+xml">
+        <style>
+            body {
+                background-color: #181818;
+            }
+        </style>
     </head>    <body>
         <button onClick="loadAndInstantiateWasm();" id="reloadButton">Reload WASM</button>
         <button onClick="restartWasm();" id="restartButton" disabled>Restart WASM</button>
@@ -11,10 +16,11 @@
             <option value="greyscale" selected>Greyscale</option>
             <option value="nearest neighbour">NN</option>
             <option value="bilinear">Bilinear</option>
+            <option value="text">Text</option>
         </select>
         <button onClick="drawImgData();" id="runButton" disabled>RUN</button>
         <br>
-        <img id="vrImg" src="./Vinosaurus_Rex.png" alt="Der schreckliche Vinosaurus Rex"/>
+        <img id="vrImg" src="./Vinosaurus Rex 1024.png" alt="Der schreckliche Vinosaurus Rex"/>
         <script src="./dist/wasm_exec.js"></script>
         <script src="index.js"></script>
         <script>
