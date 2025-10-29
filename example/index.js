@@ -22,6 +22,12 @@ async function loadAndInstantiateWasm() {
             console.error("[WASM ERROR]", err);
         }
     );
+    const version = await fetch("./dist/VERSION").then((res) => res.text());
+    const wasmVersion = getVersion();
+    if (version.trim() !== wasmVersion.trim()) {
+        console.error(`Version mismatch: JS version is "${version}" and Wasm version is "${wasmVersion}"`);
+        alert("Version mismatch! Please reload the page.");
+    }
 }
 
 async function restartWasm() {
