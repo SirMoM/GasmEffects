@@ -22,8 +22,8 @@ func (c Char8) String() string {
 }
 
 // StringToChar8 converts a string to a Char8 array to be drawn on a RgbaImage
-func StringToChar8(s string) ([]Char8, error) {
-	c := make([]Char8, len(s))
+func StringToChar8(s string) ([]*Char8, error) {
+	c := make([]*Char8, len(s))
 	shared.Warn(fmt.Sprintf("Converting string to []Char8 %s", strings.ToUpper(s)))
 	for i, r := range strings.ToUpper(s) {
 
@@ -32,7 +32,7 @@ func StringToChar8(s string) ([]Char8, error) {
 			return nil, fmt.Errorf("string contains invalid char can not convert to Char8 %c", r)
 		} else {
 			shared.Warn(fmt.Sprintf("%c -> %s", r, char8))
-			c[i] = char8
+			c[i] = &char8
 		}
 	}
 	return c, nil
@@ -79,7 +79,7 @@ func drawString(startIdx int, width int, text string, buf RgbaImage) (RgbaImage,
 	}
 
 	for i, char8 := range bitmaps {
-		drawChar8(startIdx+(Char8Width*i), width, char8, buf)
+		drawChar8(startIdx+(Char8Width*i), width, *char8, buf)
 	}
 
 	return buf, nil
