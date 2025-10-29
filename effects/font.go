@@ -63,9 +63,9 @@ func drawChar8(startIdx int, width int, c Char8, buf RgbaImage) RgbaImage {
 			if p == 0 {
 				// TODO This does not work well with overflows...
 				idx := startIdx + (y*width + x)
-				buf[idx].A = p
-				buf[idx].G = p
-				buf[idx].B = p
+				buf[idx].R = 0
+				buf[idx].G = 0
+				buf[idx].B = 0
 			}
 		}
 	}
