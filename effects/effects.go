@@ -2,6 +2,7 @@ package effects
 
 import (
 	"math"
+	"unsafe"
 
 	"github.com/SirMoM/go-wasm/shared"
 )
@@ -38,34 +39,26 @@ func GetManipulationFunction(funIdx int) ManipulationFunction {
 
 // ToBytes converts the RgbaImage back to a flat byte slice.
 func (rgbaImage *RgbaImage) toBytes() []byte {
-	pixelCount := len(*rgbaImage)
-	data := make([]byte, pixelCount*4)
-
-	for i, rgba := range *rgbaImage {
-		base := i * 4
-		data[base] = rgba.R
-		data[base+1] = rgba.G
-		data[base+2] = rgba.B
-		data[base+3] = rgba.A
+	if len(*rgbaImage) == 0 {
+		return []byte{}
 	}
-	return data
+
+	// Use unsafe to reinterpret the RGBA slice as a byte slice
+	// This avoids copying and is much more efficient
+	return unsafe.Slice((*byte)(unsafe.Pointer(&(*rgbaImage)[0])), len(*rgbaImage)*4)
+
 }
 
 // RgbaFromBytes converts a flat byte slice into an RgbaImage.
 func RgbaFromBytes(data []byte) RgbaImage {
-	pixelCount := len(data) / 4
-	imgAsRGBA := make(RgbaImage, pixelCount)
-	for p := 0; p < pixelCount; p++ {
-		base := p * 4
-		rgba := RGBA{
-			R: data[base],
-			G: data[base+1],
-			B: data[base+2],
-			A: data[base+3],
-		}
-		imgAsRGBA[p] = rgba
+	if len(data)%4 != 0 {
+		shared.ERR("data length must be a multiple of 4")
+		return RgbaImage{}
 	}
-	return imgAsRGBA
+
+	pixelCount := len(data) / 4
+
+	return RgbaImage(unsafe.Slice((*RGBA)(unsafe.Pointer(&data[0])), pixelCount))
 }
 
 // Greyscale uses the Luminosity Method to turn an image to a gray scale.
@@ -94,7 +87,7 @@ func nearestNeighbour(imageIn shared.ImgData) (manipulatedImageOut shared.ImgDat
 		return imageIn
 	}
 
-	clusterSize := 8
+	clusterSize := 16
 	rgbaImage := RgbaFromBytes(imageIn.Data)
 	width := imageIn.Width
 	height := imageIn.Height
@@ -140,7 +133,7 @@ func bilinear(imageIn shared.ImgData) (manipulatedImageOut shared.ImgData) {
 		return imageIn
 	}
 
-	clusterSize := 8
+	clusterSize := 4
 	rgbaImage := RgbaFromBytes(imageIn.Data)
 	width := imageIn.Width
 	height := imageIn.Height
