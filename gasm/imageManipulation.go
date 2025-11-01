@@ -53,6 +53,8 @@ func ManipulateImg(this js.Value, args []js.Value) any {
 		idx = e.BILINEAR
 	case "text":
 		idx = e.TEXT
+	case "ascii":
+		idx = e.ASCII
 	default:
 		shared.ERR(fmt.Sprintf("unknown manipulation function %q. Supported: greyscale", manipulateImgArgs.functionName))
 		return js.Undefined()

@@ -20,6 +20,7 @@ const (
 	NEAREST_NEIGHBOUR
 	BILINEAR
 	TEXT
+	ASCII
 	END
 )
 
@@ -31,6 +32,7 @@ var Functions ManipulationFunctions = ManipulationFunctions{
 	nearestNeighbour,
 	bilinear,
 	drawText,
+	turnToAscii,
 }
 
 func GetManipulationFunction(funIdx int) ManipulationFunction {
@@ -133,7 +135,7 @@ func bilinear(imageIn shared.ImgData) (manipulatedImageOut shared.ImgData) {
 		return imageIn
 	}
 
-	clusterSize := 4
+	clusterSize := 8
 	rgbaImage := RgbaFromBytes(imageIn.Data)
 	width := imageIn.Width
 	height := imageIn.Height

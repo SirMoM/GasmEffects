@@ -13,10 +13,11 @@
         <button onClick="loadAndInstantiateWasm();" id="reloadButton">Reload WASM</button>
         <button onClick="restartWasm();" id="restartButton" disabled>Restart WASM</button>
         <select id="filter" name="filter">
-            <option value="greyscale" selected>Greyscale</option>
+            <option value="greyscale" >Greyscale</option>
             <option value="nearest neighbour">NN</option>
             <option value="bilinear">Bilinear</option>
             <option value="text">Text</option>
+            <option value="ascii" selected>ASCII Art</option>
         </select>
         <button onClick="drawImgData();" id="runButton" disabled>RUN</button>
         <br>
